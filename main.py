@@ -115,7 +115,7 @@ class MainWindow(QMainWindow):
 
     def load_source(self):
         dialog = QFileDialog(self)
-        dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib)")
+        dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib *.jpg *.jpeg *.jpe *.jfif *.tiff *.tif *.webp)")
         out = dialog.exec()
         if out:
             self.file = dialog.selectedFiles()[0]
