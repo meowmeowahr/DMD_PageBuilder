@@ -119,6 +119,7 @@ class MainWindow(QMainWindow):
         self.bottom_layout.addWidget(self.save_pc_button)
 
         self.save_dmd_button = QPushButton("Save for DMD")
+        self.save_dmd_button.clicked.connect(self.save_dmd)
         self.bottom_layout.addWidget(self.save_dmd_button)
 
         self.create_image()
@@ -202,6 +203,23 @@ class MainWindow(QMainWindow):
         out = dialog.getSaveFileName(filter="Mono BMP (*.bmp)")
         if out:
             self.im.save(out[0])
+
+    def save_dmd(self):
+        dialog = QFileDialog(self)
+        out = dialog.getSaveFileName(filter="DMD Image (*.dimg)")
+        if out:
+            data = list(self.im.getdata())
+
+            for index, pixel in enumerate(data):
+                if pixel == (255, 255, 255):
+                    data[index] = "1"
+                else:
+                    data[index] = "0"
+
+            print(data)
+            data = "".join(data)
+            with open(out[0], "w") as file:
+                file.write(data)
 
 
 if __name__ == "__main__":
