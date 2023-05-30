@@ -1,3 +1,5 @@
+import statistics
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -37,6 +39,10 @@ def slice_per(source, step):
     return [source[i::step] for i in range(step)]
 
 
+def flatten(l):
+    return [item for sublist in l for item in sublist]
+
+
 class MainWindow(QMainWindow):
     # noinspection PyArgumentList
     def __init__(self):
@@ -45,7 +51,7 @@ class MainWindow(QMainWindow):
 
         self.file = None
         self.im = Image.open("error.png")
-        self.threshold = 127
+        self.threshold = 50
         self.invert = False
 
         self.widget = QTabWidget()
@@ -103,7 +109,7 @@ class MainWindow(QMainWindow):
 
     def load_source(self):
         dialog = QFileDialog(self)
-        dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dip)")
+        dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib)")
         out = dialog.exec()
         if out:
             self.file = dialog.selectedFiles()[0]
@@ -145,6 +151,24 @@ class MainWindow(QMainWindow):
             self.im = ImageOps.invert(self.im)
 
         raw_data = slice_per(list(self.im.getdata()), 32)
+
+        for yi, y in enumerate(raw_data):
+            for xi, x in enumerate(y):
+                print(statistics.mean(x))
+                if self.invert:
+                    threshold = 255 - self.threshold
+                else:
+                    threshold = self.threshold
+
+                if statistics.mean(x) > threshold:
+                    raw_data[yi][xi] = (255, 255, 255)
+                else:
+                    raw_data[yi][xi] = (0, 0, 0)
+
+        self.im = Image.new(self.im.mode, self.im.size)
+        self.im.putdata(flatten(raw_data))
+        self.im = self.im.rotate(-90)
+        self.im = ImageOps.mirror(self.im)
 
         preview_im = self.im
         preview_im = preview_im.convert("RGB")
