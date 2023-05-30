@@ -105,6 +105,11 @@ class MainWindow(QMainWindow):
         self.invert_check.toggled.connect(self.create_image)
         self.edit_right_layout.addWidget(self.invert_check)
 
+        self.threshold_slider = QSlider(Qt.Horizontal)
+        self.threshold_slider.setRange(0, 255)
+        self.threshold_slider.valueChanged.connect(self.create_image)
+        self.edit_right_layout.addWidget(self.threshold_slider)
+
         self.create_image()
         self.show()
 
@@ -139,6 +144,7 @@ class MainWindow(QMainWindow):
 
     def create_image(self):
         self.invert = self.invert_check.isChecked()
+        self.threshold = self.threshold_slider.value()
 
         if self.file:
             self.im = Image.open(self.file)
