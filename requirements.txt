@@ -1,0 +1,3 @@
+qt_material
+PyQt5
+Pillow
