@@ -107,8 +107,19 @@ class MainWindow(QMainWindow):
 
         self.threshold_slider = QSlider(Qt.Horizontal)
         self.threshold_slider.setRange(0, 255)
+        self.threshold_slider.setValue(self.threshold)
         self.threshold_slider.valueChanged.connect(self.create_image)
         self.edit_right_layout.addWidget(self.threshold_slider)
+
+        self.bottom_layout = QHBoxLayout()
+        self.builder_layout.addLayout(self.bottom_layout)
+
+        self.save_pc_button = QPushButton("Save for PC")
+        self.save_pc_button.clicked.connect(self.save_pc)
+        self.bottom_layout.addWidget(self.save_pc_button)
+
+        self.save_dmd_button = QPushButton("Save for DMD")
+        self.bottom_layout.addWidget(self.save_dmd_button)
 
         self.create_image()
         self.show()
@@ -161,7 +172,6 @@ class MainWindow(QMainWindow):
 
         for yi, y in enumerate(raw_data):
             for xi, x in enumerate(y):
-                print(statistics.mean(x))
                 if self.invert:
                     threshold = 255 - self.threshold
                 else:
@@ -186,6 +196,12 @@ class MainWindow(QMainWindow):
 
         preview_pixmap = QPixmap.fromImage(qi)
         self.output_preview.setPixmap(preview_pixmap.scaled(64, 64))
+
+    def save_pc(self):
+        dialog = QFileDialog(self)
+        out = dialog.getSaveFileName(filter="Mono BMP (*.bmp)")
+        if out:
+            self.im.save(out[0])
 
 
 if __name__ == "__main__":
