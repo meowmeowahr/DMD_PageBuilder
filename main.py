@@ -105,6 +105,7 @@ class MainWindow(QMainWindow):
         self.invert_check.toggled.connect(self.create_image)
         self.edit_right_layout.addWidget(self.invert_check)
 
+        self.create_image()
         self.show()
 
     def load_source(self):
