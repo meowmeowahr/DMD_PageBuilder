@@ -217,9 +217,8 @@ class MainWindow(QMainWindow):
                 else:
                     data[index] = "0"
 
+            data = "10;" + "".join(data)
             print(data)
-            data = "".join(data)
-            data = re.sub("(.{32})", "\\1\n", data, 0, re.DOTALL)
             with open(out[0], "w") as file:
                 file.write(data)
 
