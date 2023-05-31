@@ -1,3 +1,4 @@
+import re
 import statistics
 
 from PyQt5.QtWidgets import *
@@ -206,7 +207,7 @@ class MainWindow(QMainWindow):
 
     def save_dmd(self):
         dialog = QFileDialog(self)
-        out = dialog.getSaveFileName(filter="DMD Image (*.dimg)")
+        out = dialog.getSaveFileName(filter="DMD Image (*.dmd)")
         if out:
             data = list(self.im.getdata())
 
@@ -218,6 +219,7 @@ class MainWindow(QMainWindow):
 
             print(data)
             data = "".join(data)
+            data = re.sub("(.{32})", "\\1\n", data, 0, re.DOTALL)
             with open(out[0], "w") as file:
                 file.write(data)
 
