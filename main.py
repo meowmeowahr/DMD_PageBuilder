@@ -1,15 +1,12 @@
-import re
 import statistics
-
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-import qt_material
+import sys
 
 from PIL import Image, ImageOps
 
-import sys
-
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+import qt_material
 
 MAX_FILE_PREVIEW_LEN = 40
 
@@ -40,8 +37,8 @@ def slice_per(source, step):
     return [source[i::step] for i in range(step)]
 
 
-def flatten(l):
-    return [item for sublist in l for item in sublist]
+def flatten(li):
+    return [item for sublist in li for item in sublist]
 
 
 class MainWindow(QMainWindow):
@@ -80,7 +77,7 @@ class MainWindow(QMainWindow):
         self.builder_layout.addWidget(self.edit_group)
 
         self.edit_layout = QHBoxLayout()
-        self.edit_layout.setAlignment(Qt.AlignHCenter)
+        self.edit_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.edit_group.setLayout(self.edit_layout)
 
         self.edit_left_layout = QVBoxLayout()
@@ -89,13 +86,13 @@ class MainWindow(QMainWindow):
         self.source_preview = QLabel()
         self.source_preview.setPixmap(QPixmap("error.png").scaled(64, 64))
         self.source_preview.setFixedSize(QSize(64, 64))
-        self.source_preview.setAlignment(Qt.AlignCenter)
+        self.source_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.edit_left_layout.addWidget(self.source_preview)
 
         self.output_preview = QLabel()
         self.output_preview.setPixmap(QPixmap("error.png").scaled(64, 64))
         self.output_preview.setFixedSize(QSize(64, 64))
-        self.output_preview.setAlignment(Qt.AlignCenter)
+        self.output_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.edit_left_layout.addWidget(self.output_preview)
 
         self.edit_right_layout = QVBoxLayout()
@@ -106,8 +103,8 @@ class MainWindow(QMainWindow):
         self.invert_check.toggled.connect(self.create_image)
         self.edit_right_layout.addWidget(self.invert_check)
 
-        self.threshold_slider = QSlider(Qt.Horizontal)
-        self.threshold_slider.setRange(0, 255)
+        self.threshold_slider = QSlider(Qt.Orientation.Horizontal)
+        self.threshold_slider.setRange(-1, 255)
         self.threshold_slider.setValue(self.threshold)
         self.threshold_slider.valueChanged.connect(self.create_image)
         self.edit_right_layout.addWidget(self.threshold_slider)
@@ -141,7 +138,6 @@ class MainWindow(QMainWindow):
                 msg.setWindowTitle("Image Size")
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
-                preview_im = None
             else:
                 self.file_text.setText(str_trunc(self.file, MAX_FILE_PREVIEW_LEN))
                 preview_im = self.im
@@ -201,14 +197,14 @@ class MainWindow(QMainWindow):
 
     def save_pc(self):
         dialog = QFileDialog(self)
-        out = dialog.getSaveFileName(filter="Mono BMP (*.bmp)")
-        if out:
+        out = dialog.getSaveFileName(filter="Bitmap Image (*.bmp)", parent=self)
+        if out[0]:
             self.im.save(out[0])
 
     def save_dmd(self):
         dialog = QFileDialog(self)
-        out = dialog.getSaveFileName(filter="DMD Image (*.dmd)")
-        if out:
+        out = dialog.getSaveFileName(filter="DMD Image (*.dmd)", parent=self)
+        if out[0]:
             data = list(self.im.getdata())
 
             for index, pixel in enumerate(data):
