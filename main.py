@@ -221,6 +221,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    qt_material.apply_stylesheet(app, "dark_red.xml")
+    qt_material.apply_stylesheet(app, "dark_red.xml", css_file="m3-style.qss")
     window = MainWindow()
     sys.exit(app.exec())

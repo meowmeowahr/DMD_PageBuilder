@@ -1,0 +1,14 @@
+QPushButton {{
+  color: {QTMATERIAL_SECONDARYCOLOR};
+  background-color: {QTMATERIAL_PRIMARYCOLOR};
+  text-transform: none;
+  border-radius: 18px;
+}}
+
+QTabBar {{
+  text-transform: none;
+}}
+
+QGroupBox {{
+  text-transform: none;
+}}
