@@ -7,6 +7,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import qt_material
+import qtawesome as qta
 
 MAX_FILE_PREVIEW_LEN = 40
 
@@ -46,6 +47,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__(None)
         self.setWindowTitle("DMD Page Builder")
+        self.setWindowIcon(QIcon("icon.svg"))
 
         self.file = None
         self.im = Image.open("error.png")
@@ -67,7 +69,9 @@ class MainWindow(QMainWindow):
         self.edit_widget.setLayout(self.edit_layout)
         self.widget.addTab(self.edit_widget, "Edit")
 
-        self.file_button = QPushButton("Select an Image")
+        self.file_button = QPushButton("Pick an Image")
+        self.file_button.setIcon(qta.icon("mdi.upload"))
+        self.file_button.setIconSize(QSize(32, 32))
         self.file_button.clicked.connect(self.load_source)
         self.load_layout.addWidget(self.file_button)
 
@@ -96,14 +100,14 @@ class MainWindow(QMainWindow):
         self.edit_top_layout.addWidget(self.out_label, 0, 1)
 
         self.source_preview_2 = QLabel()
-        self.source_preview_2.setPixmap(QPixmap("error.png").scaled(64, 64))
-        self.source_preview_2.setFixedSize(QSize(64, 64))
+        self.source_preview_2.setPixmap(QPixmap("error.png").scaled(128, 128))
+        self.source_preview_2.setFixedSize(QSize(128, 128))
         self.source_preview_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.edit_top_layout.addWidget(self.source_preview_2, 1, 0)
 
         self.output_preview = QLabel()
-        self.output_preview.setPixmap(QPixmap("error.png").scaled(64, 64))
-        self.output_preview.setFixedSize(QSize(64, 64))
+        self.output_preview.setPixmap(QPixmap("error.png").scaled(128, 128))
+        self.output_preview.setFixedSize(QSize(128, 128))
         self.output_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.edit_top_layout.addWidget(self.output_preview, 1, 1)
 
@@ -122,10 +126,14 @@ class MainWindow(QMainWindow):
         self.edit_layout.addLayout(self.bottom_layout)
 
         self.save_pc_button = QPushButton("Save for PC")
+        self.save_pc_button.setIcon(qta.icon("mdi.content-save"))
+        self.save_pc_button.setIconSize(QSize(32, 32))
         self.save_pc_button.clicked.connect(self.save_pc)
         self.bottom_layout.addWidget(self.save_pc_button)
 
         self.save_dmd_button = QPushButton("Save for DMD")
+        self.save_dmd_button.setIcon(qta.icon("mdi.micro-sd"))
+        self.save_dmd_button.setIconSize(QSize(32, 32))
         self.save_dmd_button.clicked.connect(self.save_dmd)
         self.bottom_layout.addWidget(self.save_dmd_button)
 
@@ -157,7 +165,7 @@ class MainWindow(QMainWindow):
                             QImage.Format.Format_RGB888)
                 preview_pixmap = QPixmap.fromImage(qi)
                 self.source_preview.setPixmap(preview_pixmap.scaled(64, 64))
-                self.source_preview_2.setPixmap(preview_pixmap.scaled(64, 64))
+                self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
                 self.create_image()
 
@@ -203,7 +211,7 @@ class MainWindow(QMainWindow):
                     QImage.Format.Format_RGB888)
 
         preview_pixmap = QPixmap.fromImage(qi)
-        self.output_preview.setPixmap(preview_pixmap.scaled(64, 64))
+        self.output_preview.setPixmap(preview_pixmap.scaled(128, 128))
 
     def save_pc(self):
         dialog = QFileDialog(self)
