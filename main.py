@@ -55,62 +55,71 @@ class MainWindow(QMainWindow):
         self.widget = QTabWidget()
         self.setCentralWidget(self.widget)
 
-        self.builder_widget = QWidget()
-        self.builder_layout = QVBoxLayout()
-        self.builder_widget.setLayout(self.builder_layout)
-        self.widget.addTab(self.builder_widget, "Builder")
+        self.load_widget = QWidget()
+        self.load_root_layout = QHBoxLayout()
+        self.load_layout = QVBoxLayout()
+        self.load_root_layout.addLayout(self.load_layout)
+        self.load_widget.setLayout(self.load_root_layout)
+        self.widget.addTab(self.load_widget, "Load")
 
-        self.file_group = QGroupBox("Load")
-        self.builder_layout.addWidget(self.file_group)
-
-        self.file_layout = QVBoxLayout()
-        self.file_group.setLayout(self.file_layout)
+        self.edit_widget = QWidget()
+        self.edit_layout = QVBoxLayout()
+        self.edit_widget.setLayout(self.edit_layout)
+        self.widget.addTab(self.edit_widget, "Edit")
 
         self.file_button = QPushButton("Select an Image")
         self.file_button.clicked.connect(self.load_source)
-        self.file_layout.addWidget(self.file_button)
+        self.load_layout.addWidget(self.file_button)
 
         self.file_text = QLabel(str_trunc("No file selected", MAX_FILE_PREVIEW_LEN))
-        self.file_layout.addWidget(self.file_text)
+        self.load_layout.addWidget(self.file_text)
 
-        self.edit_group = QGroupBox("Edit")
-        self.builder_layout.addWidget(self.edit_group)
-
-        self.edit_layout = QHBoxLayout()
-        self.edit_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.edit_group.setLayout(self.edit_layout)
-
-        self.edit_left_layout = QVBoxLayout()
-        self.edit_layout.addLayout(self.edit_left_layout)
+        self.load_layout.addStretch()
 
         self.source_preview = QLabel()
         self.source_preview.setPixmap(QPixmap("error.png").scaled(64, 64))
         self.source_preview.setFixedSize(QSize(64, 64))
         self.source_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.edit_left_layout.addWidget(self.source_preview)
+        self.load_layout.addWidget(self.source_preview, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.load_layout.addStretch()
+
+        self.edit_top_layout = QGridLayout()
+        self.edit_layout.addLayout(self.edit_top_layout)
+
+        self.edit_layout.addStretch()
+
+        self.source_label = QLabel("Source")
+        self.edit_top_layout.addWidget(self.source_label, 0, 0)
+
+        self.out_label = QLabel("Output")
+        self.edit_top_layout.addWidget(self.out_label, 0, 1)
+
+        self.source_preview_2 = QLabel()
+        self.source_preview_2.setPixmap(QPixmap("error.png").scaled(64, 64))
+        self.source_preview_2.setFixedSize(QSize(64, 64))
+        self.source_preview_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.edit_top_layout.addWidget(self.source_preview_2, 1, 0)
 
         self.output_preview = QLabel()
         self.output_preview.setPixmap(QPixmap("error.png").scaled(64, 64))
         self.output_preview.setFixedSize(QSize(64, 64))
         self.output_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.edit_left_layout.addWidget(self.output_preview)
-
-        self.edit_right_layout = QVBoxLayout()
-        self.edit_layout.addLayout(self.edit_right_layout)
+        self.edit_top_layout.addWidget(self.output_preview, 1, 1)
 
         self.invert_check = QCheckBox("Invert")
         self.invert_check.setChecked(self.invert)
         self.invert_check.toggled.connect(self.create_image)
-        self.edit_right_layout.addWidget(self.invert_check)
+        self.edit_layout.addWidget(self.invert_check)
 
         self.threshold_slider = QSlider(Qt.Orientation.Horizontal)
         self.threshold_slider.setRange(-1, 255)
         self.threshold_slider.setValue(self.threshold)
         self.threshold_slider.valueChanged.connect(self.create_image)
-        self.edit_right_layout.addWidget(self.threshold_slider)
+        self.edit_layout.addWidget(self.threshold_slider)
 
         self.bottom_layout = QHBoxLayout()
-        self.builder_layout.addLayout(self.bottom_layout)
+        self.edit_layout.addLayout(self.bottom_layout)
 
         self.save_pc_button = QPushButton("Save for PC")
         self.save_pc_button.clicked.connect(self.save_pc)
@@ -148,6 +157,7 @@ class MainWindow(QMainWindow):
                             QImage.Format.Format_RGB888)
                 preview_pixmap = QPixmap.fromImage(qi)
                 self.source_preview.setPixmap(preview_pixmap.scaled(64, 64))
+                self.source_preview_2.setPixmap(preview_pixmap.scaled(64, 64))
 
                 self.create_image()
 
