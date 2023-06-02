@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         self.builder_widget.setLayout(self.builder_layout)
         self.widget.addTab(self.builder_widget, "Builder")
 
-        self.file_group = QGroupBox("Step 1")
+        self.file_group = QGroupBox("Load")
         self.builder_layout.addWidget(self.file_group)
 
         self.file_layout = QVBoxLayout()
@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         self.file_text = QLabel(str_trunc("No file selected", MAX_FILE_PREVIEW_LEN))
         self.file_layout.addWidget(self.file_text)
 
-        self.edit_group = QGroupBox("Step 2")
+        self.edit_group = QGroupBox("Edit")
         self.builder_layout.addWidget(self.edit_group)
 
         self.edit_layout = QHBoxLayout()
@@ -214,7 +214,6 @@ class MainWindow(QMainWindow):
                     data[index] = "0"
 
             data = "10;" + "".join(data)
-            print(data)
             with open(out[0], "w") as file:
                 file.write(data)
 
