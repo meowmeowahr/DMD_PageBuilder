@@ -9,6 +9,9 @@ from PyQt5.QtWidgets import *
 import qt_material
 import qtawesome as qta
 
+
+__version__ = "v0.1.0"
+
 MAX_FILE_PREVIEW_LEN = 40
 
 
@@ -68,6 +71,12 @@ class MainWindow(QMainWindow):
         self.edit_layout = QVBoxLayout()
         self.edit_widget.setLayout(self.edit_layout)
         self.widget.addTab(self.edit_widget, "Edit")
+
+        self.about_widget = QWidget()
+        self.about_layout = QVBoxLayout()
+        self.about_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.about_widget.setLayout(self.about_layout)
+        self.widget.addTab(self.about_widget, "About")
 
         self.file_button = QPushButton("Pick an Image")
         self.file_button.setIcon(qta.icon("mdi.upload"))
@@ -136,6 +145,26 @@ class MainWindow(QMainWindow):
         self.save_dmd_button.setIconSize(QSize(32, 32))
         self.save_dmd_button.clicked.connect(self.save_dmd)
         self.bottom_layout.addWidget(self.save_dmd_button)
+
+        self.about_icon = QLabel()
+        self.about_icon.setPixmap(QPixmap("icon.svg").scaled(192, 192,
+                                                             transformMode=Qt.TransformationMode.SmoothTransformation))
+        self.about_layout.addWidget(self.about_icon)
+
+        self.about_title = QLabel("DMD PageBuilder")
+        self.about_title.setObjectName("H1")
+        self.about_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.about_layout.addWidget(self.about_title)
+
+        self.about_version = QLabel(__version__)
+        self.about_version.setObjectName("H2")
+        self.about_version.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.about_layout.addWidget(self.about_version)
+
+        self.about_author = QLabel("By: Kevin Ahr")
+        self.about_author.setObjectName("H2")
+        self.about_author.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.about_layout.addWidget(self.about_author)
 
         self.create_image()
         self.show()

@@ -12,3 +12,13 @@ QTabBar {{
 QGroupBox {{
   text-transform: none;
 }}
+
+#H1 {{
+  font-size: 22px;
+  font-weight: bold;
+}}
+
+#H2 {{
+  font-size: 16px;
+  font-weight: bold;
+}}
