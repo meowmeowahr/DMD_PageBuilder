@@ -256,13 +256,12 @@ class MainWindow(QMainWindow):
 
             for index, pixel in enumerate(data):
                 if pixel == (255, 255, 255):
-                    data[index] = "1"
+                    data[index] = 0x01
                 else:
-                    data[index] = "0"
+                    data[index] = 0x00
 
-            data = "10;" + "".join(data)
-            with open(out[0], "w") as file:
-                file.write(data)
+            with open(out[0], "wb") as file:
+                file.write(bytes(data))
 
 
 if __name__ == "__main__":
