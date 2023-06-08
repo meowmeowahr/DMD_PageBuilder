@@ -3,6 +3,7 @@ QPushButton {{
   background-color: {QTMATERIAL_PRIMARYCOLOR};
   text-transform: none;
   border-radius: 18px;
+  opacity: 0.1;
 }}
 
 QTabBar {{

@@ -1,3 +1,4 @@
+import os
 import statistics
 import sys
 
@@ -79,7 +80,7 @@ class MainWindow(QMainWindow):
         self.widget.addTab(self.about_widget, "About")
 
         self.file_button = QPushButton("Pick an Image")
-        self.file_button.setIcon(qta.icon("mdi.upload"))
+        self.file_button.setIcon(qta.icon("mdi.upload", color=secondary_color))
         self.file_button.setIconSize(QSize(32, 32))
         self.file_button.clicked.connect(self.load_source)
         self.load_layout.addWidget(self.file_button)
@@ -135,13 +136,13 @@ class MainWindow(QMainWindow):
         self.edit_layout.addLayout(self.bottom_layout)
 
         self.save_pc_button = QPushButton("Save for PC")
-        self.save_pc_button.setIcon(qta.icon("mdi.content-save"))
+        self.save_pc_button.setIcon(qta.icon("mdi.content-save", color=secondary_color))
         self.save_pc_button.setIconSize(QSize(32, 32))
         self.save_pc_button.clicked.connect(self.save_pc)
         self.bottom_layout.addWidget(self.save_pc_button)
 
         self.save_dmd_button = QPushButton("Save for DMD")
-        self.save_dmd_button.setIcon(qta.icon("mdi.micro-sd"))
+        self.save_dmd_button.setIcon(qta.icon("mdi.micro-sd", color=secondary_color))
         self.save_dmd_button.setIconSize(QSize(32, 32))
         self.save_dmd_button.clicked.connect(self.save_dmd)
         self.bottom_layout.addWidget(self.save_dmd_button)
@@ -266,6 +267,9 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    qt_material.apply_stylesheet(app, "dark_red.xml", css_file="m3-style.qss")
+    qt_material.apply_stylesheet(app, "theme.xml", css_file="m3-style.qss")
+
+    secondary_color = os.environ.get("QTMATERIAL_SECONDARYCOLOR")
+
     window = MainWindow()
     sys.exit(app.exec())
