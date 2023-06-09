@@ -148,7 +148,7 @@ class MainWindow(QMainWindow):
         self.bottom_layout.addWidget(self.save_dmd_button)
 
         self.about_icon = QLabel()
-        self.about_icon.setPixmap(QPixmap("icon.svg").scaled(192, 192,
+        self.about_icon.setPixmap(QPixmap("icon-large.svg").scaled(192, 192,
                                                              transformMode=Qt.TransformationMode.SmoothTransformation))
         self.about_layout.addWidget(self.about_icon)
 
