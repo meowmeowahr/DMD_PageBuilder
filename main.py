@@ -149,7 +149,7 @@ class MainWindow(QMainWindow):
 
         self.about_icon = QLabel()
         self.about_icon.setPixmap(QPixmap("icon-large.svg").scaled(192, 192,
-                                                             transformMode=Qt.TransformationMode.SmoothTransformation))
+                                  transformMode=Qt.TransformationMode.SmoothTransformation))
         self.about_layout.addWidget(self.about_icon)
 
         self.about_title = QLabel("DMD PageBuilder")
@@ -267,8 +267,10 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    qt_material.apply_stylesheet(app, "theme.xml", css_file="m3-style.qss")
+    app.setApplicationName("DMD Page Builder")
+    app.setApplicationVersion(__version__)
 
+    qt_material.apply_stylesheet(app, "theme.xml", css_file="m3-style.qss")
     secondary_color = os.environ.get("QTMATERIAL_SECONDARYCOLOR")
 
     window = MainWindow()
