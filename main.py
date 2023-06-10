@@ -57,6 +57,7 @@ class MainWindow(QMainWindow):
         self.im = Image.open("error.png")
         self.threshold = 50
         self.invert = False
+        self.timemult = 1
 
         self.widget = QTabWidget()
         self.setCentralWidget(self.widget)
@@ -126,11 +127,29 @@ class MainWindow(QMainWindow):
         self.invert_check.toggled.connect(self.create_image)
         self.edit_layout.addWidget(self.invert_check)
 
+        self.threshold_layout = QHBoxLayout()
+        self.edit_layout.addLayout(self.threshold_layout)
+
+        self.threshold_label = QLabel("Threshold")
+        self.threshold_layout.addWidget(self.threshold_label)
+
         self.threshold_slider = QSlider(Qt.Orientation.Horizontal)
         self.threshold_slider.setRange(-1, 255)
         self.threshold_slider.setValue(self.threshold)
         self.threshold_slider.valueChanged.connect(self.create_image)
-        self.edit_layout.addWidget(self.threshold_slider)
+        self.threshold_layout.addWidget(self.threshold_slider)
+
+        self.multiplier_layout = QHBoxLayout()
+        self.edit_layout.addLayout(self.multiplier_layout)
+
+        self.multiplier_label = QLabel("Page Time Multiplier")
+        self.multiplier_layout.addWidget(self.multiplier_label)
+
+        self.multiplier_spin = QSpinBox()
+        self.multiplier_spin.setValue(self.timemult)
+        self.multiplier_spin.setRange(1, 20)
+        self.multiplier_spin.valueChanged.connect(self.on_mult_spin)
+        self.multiplier_layout.addWidget(self.multiplier_spin)
 
         self.bottom_layout = QHBoxLayout()
         self.edit_layout.addLayout(self.bottom_layout)
@@ -261,8 +280,13 @@ class MainWindow(QMainWindow):
                 else:
                     data[index] = 0x00
 
+            data.insert(0, self.timemult)
+
             with open(out[0], "wb") as file:
                 file.write(bytes(data))
+
+    def on_mult_spin(self):
+        self.timemult = self.multiplier_spin.value()
 
 
 if __name__ == "__main__":
