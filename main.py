@@ -9,6 +9,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import qt_material
 import qtawesome as qta
+from pyqt_windows_os_light_dark_theme_window.main import Window as WinDarkWindow
 
 
 __version__ = "v0.1.0"
@@ -46,10 +47,10 @@ def flatten(li):
     return [item for sublist in li for item in sublist]
 
 
-class MainWindow(QMainWindow):
+class MainWindow(WinDarkWindow):
     # noinspection PyArgumentList
     def __init__(self):
-        super(MainWindow, self).__init__(None)
+        super(MainWindow, self).__init__()
         self.setWindowTitle("DMD Page Builder")
         self.setWindowIcon(QIcon("icon.svg"))
 
@@ -59,8 +60,12 @@ class MainWindow(QMainWindow):
         self.invert = False
         self.timemult = 1
 
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(2, 2, 2, 2)
+        self.setLayout(self.layout)
+
         self.widget = QTabWidget()
-        self.setCentralWidget(self.widget)
+        self.layout.addWidget(self.widget)
 
         self.load_widget = QWidget()
         self.load_root_layout = QHBoxLayout()

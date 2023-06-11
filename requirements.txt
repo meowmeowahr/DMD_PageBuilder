@@ -2,3 +2,4 @@ qt_material
 PyQt5
 Pillow
 qtawesome
+pyqt-windows-os-light-dark-theme-window
