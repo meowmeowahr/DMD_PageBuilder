@@ -1,6 +1,9 @@
 {
   "name_pairs": {
     "alert.bmp": "Alert (MDI)",
-    "test.bmp": "X"
+    "robot.bmp": "Robot (MDI)",
+    "wifi.bmp": "Wi-Fi (MDI)",
+    "test.bmp": "X",
+    "logo.bmp": "Logo"
   }
 }

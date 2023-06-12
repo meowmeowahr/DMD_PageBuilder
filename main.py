@@ -412,7 +412,7 @@ class ExamplePicker(QDialog):
         icon_files = examples["name_pairs"].values()
 
         model = IconModel()
-        model.setStringList(sorted(icon_files))
+        model.setStringList(icon_files)
 
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setSourceModel(model)
