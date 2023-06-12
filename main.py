@@ -427,6 +427,12 @@ class ExamplePicker(QDialog):
         self.bottom_layout = QHBoxLayout()
         self.layout.addLayout(self.bottom_layout)
 
+        self.credit = QLabel("MDI icons from <a href=\"https://pictogrammers.com/\">Pictogrammers</a>")
+        self.credit.setOpenExternalLinks(True)
+        self.bottom_layout.addWidget(self.credit)
+
+        self.bottom_layout.addStretch()
+
         self.cancel = QPushButton("Cancel")
         self.cancel.clicked.connect(self.close)
         self.bottom_layout.addWidget(self.cancel)
@@ -467,7 +473,7 @@ class IconListView(QListView):
         # can't be drawn the expected number of times across the view without
         # being wrapped.
         # Without this, the view can flicker during resize
-        tile_width = width / 6
+        tile_width = width / 5
         icon_width = int(tile_width * 0.8)
         # tileWidth needs to be an integer for setGridSize
         tile_width = int(tile_width)
