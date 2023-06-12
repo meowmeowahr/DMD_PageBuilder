@@ -419,7 +419,6 @@ class ExamplePicker(QDialog):
         self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
 
         self.list_view = IconListView()
-        self.list_view.setUniformItemSizes(True)
         self.list_view.setViewMode(QListView.IconMode)
         self.list_view.setModel(self.proxy_model)
         self.list_view.setContextMenuPolicy(Qt.CustomContextMenu)
