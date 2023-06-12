@@ -299,14 +299,15 @@ class MainWindow(WinDarkWindow):
         self.example_picker = ExamplePicker(window)
         self.example_picker.exec()
 
-        self.open_example(os.path.join(os.path.curdir, "examples",
-                                       list(examples["name_pairs"].keys())
-                                       [list(examples["name_pairs"].values()).index(self.example_picker.item)]),
-                          self.example_picker.item)
-        self.file = os.path.join(os.path.curdir, "examples",
-                                 list(examples["name_pairs"].keys())
-                                 [list(examples["name_pairs"].values()).index(self.example_picker.item)])
-        self.create_image()
+        if self.example_picker.item:
+            self.open_example(os.path.join(os.path.curdir, "examples",
+                                           list(examples["name_pairs"].keys())
+                                           [list(examples["name_pairs"].values()).index(self.example_picker.item)]),
+                              self.example_picker.item)
+            self.file = os.path.join(os.path.curdir, "examples",
+                                     list(examples["name_pairs"].keys())
+                                     [list(examples["name_pairs"].values()).index(self.example_picker.item)])
+            self.create_image()
 
     def create_image(self):
         self.invert = self.invert_check.isChecked()
@@ -419,8 +420,21 @@ class ExamplePicker(QDialog):
         self.list_view.setModel(self.proxy_model)
         self.list_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.list_view.doubleClicked.connect(self.select)
+        self.list_view.clicked.connect(lambda: self.select_btn.setEnabled(True))
         self.list_view.setMinimumWidth(500)
         self.top_layout.addWidget(self.list_view)
+
+        self.bottom_layout = QHBoxLayout()
+        self.layout.addLayout(self.bottom_layout)
+
+        self.cancel = QPushButton("Cancel")
+        self.cancel.clicked.connect(self.close)
+        self.bottom_layout.addWidget(self.cancel)
+
+        self.select_btn = QPushButton("Select")
+        self.select_btn.clicked.connect(self.select)
+        self.select_btn.setEnabled(False)
+        self.bottom_layout.addWidget(self.select_btn)
 
         self.show()
 
