@@ -2,6 +2,7 @@ import json
 import os
 import statistics
 import sys
+import platform
 
 from PIL import Image, ImageOps
 
@@ -10,8 +11,11 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import qt_material
 import qtawesome as qta
-from pyqt_windows_os_light_dark_theme_window.main import Window as WinDarkWindow
 
+if platform.system() == "Windows" and platform.release() == "10":
+    from pyqt_windows_os_light_dark_theme_window.main import Window
+else:
+    Window = QWidget
 
 __version__ = "v0.1.0"
 
@@ -51,7 +55,7 @@ def flatten(li):
     return [item for sublist in li for item in sublist]
 
 
-class MainWindow(WinDarkWindow):
+class MainWindow(Window):
     # noinspection PyArgumentList
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -427,7 +431,8 @@ class ExamplePicker(QDialog):
         self.bottom_layout = QHBoxLayout()
         self.layout.addLayout(self.bottom_layout)
 
-        self.credit = QLabel("MDI icons from <a href=\"https://pictogrammers.com/\">Pictogrammers</a>")
+        self.credit = QLabel(f"MDI icons from <a href=\"https://pictogrammers.com/\" "
+                             f"style='color: {os.environ['QTMATERIAL_SECONDARYCOLOR']}'>Pictogrammers</a>")
         self.credit.setOpenExternalLinks(True)
         self.bottom_layout.addWidget(self.credit)
 
@@ -458,7 +463,6 @@ class IconListView(QListView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
 
     def resizeEvent(self, event):
         """
