@@ -1,3 +1,4 @@
+import json
 import os
 import statistics
 import sys
@@ -15,6 +16,9 @@ from pyqt_windows_os_light_dark_theme_window.main import Window as WinDarkWindow
 __version__ = "v0.1.0"
 
 MAX_FILE_PREVIEW_LEN = 40
+
+with open(os.path.join(os.path.curdir, "examples.json")) as ex_file:
+    examples = json.loads(ex_file.read())
 
 
 def str_trunc(string: str, nchars: int):
@@ -60,6 +64,8 @@ class MainWindow(WinDarkWindow):
         self.invert = False
         self.timemult = 1
 
+        self.example_picker = None
+
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(2, 2, 2, 2)
         self.setLayout(self.layout)
@@ -85,11 +91,20 @@ class MainWindow(WinDarkWindow):
         self.about_widget.setLayout(self.about_layout)
         self.widget.addTab(self.about_widget, "About")
 
-        self.file_button = QPushButton("Pick an Image")
+        self.file_layout = QHBoxLayout()
+        self.load_layout.addLayout(self.file_layout)
+
+        self.file_button = QPushButton("Pick File")
         self.file_button.setIcon(qta.icon("mdi.upload", color=secondary_color))
         self.file_button.setIconSize(QSize(32, 32))
         self.file_button.clicked.connect(self.load_source)
-        self.load_layout.addWidget(self.file_button)
+        self.file_layout.addWidget(self.file_button)
+
+        self.file_button = QPushButton("Pick an Example")
+        self.file_button.setIcon(qta.icon("mdi.image", color=secondary_color))
+        self.file_button.setIconSize(QSize(32, 32))
+        self.file_button.clicked.connect(self.load_example)
+        self.file_layout.addWidget(self.file_button)
 
         self.file_text = QLabel(str_trunc("No file selected", MAX_FILE_PREVIEW_LEN))
         self.load_layout.addWidget(self.file_text)
@@ -266,6 +281,33 @@ class MainWindow(WinDarkWindow):
 
                     self.create_image()
 
+    def open_example(self, file, name):
+        self.im = Image.open(file)
+
+        self.file_text.setText(str_trunc(f"Example, {name}", MAX_FILE_PREVIEW_LEN))
+        preview_im = self.im
+        preview_im = remove_transparency(preview_im, (0, 0, 0))
+        preview_im = preview_im.convert("RGB")
+        data = preview_im.tobytes("raw", "RGB")
+        qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
+                    QImage.Format.Format_RGB888)
+        preview_pixmap = QPixmap.fromImage(qi)
+        self.source_preview.setPixmap(preview_pixmap.scaled(64, 64))
+        self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
+
+    def load_example(self):
+        self.example_picker = ExamplePicker(window)
+        self.example_picker.exec()
+
+        self.open_example(os.path.join(os.path.curdir, "examples",
+                                       list(examples["name_pairs"].keys())
+                                       [list(examples["name_pairs"].values()).index(self.example_picker.item)]),
+                          self.example_picker.item)
+        self.file = os.path.join(os.path.curdir, "examples",
+                                 list(examples["name_pairs"].keys())
+                                 [list(examples["name_pairs"].values()).index(self.example_picker.item)])
+        self.create_image()
+
     def create_image(self):
         self.invert = self.invert_check.isChecked()
         self.threshold = self.threshold_slider.value()
@@ -347,6 +389,108 @@ class MainWindow(WinDarkWindow):
 
     def on_mult_spin(self):
         self.timemult = self.multiplier_spin.value()
+
+
+class ExamplePicker(QDialog):
+    def __init__(self, parent):
+        super(ExamplePicker, self).__init__(parent)
+        self.setModal(True)
+
+        self.item = ""
+
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+
+        self.top_layout = QHBoxLayout()
+        self.layout.addLayout(self.top_layout)
+
+        icon_files = examples["name_pairs"].values()
+
+        model = IconModel()
+        model.setStringList(sorted(icon_files))
+
+        self.proxy_model = QSortFilterProxyModel()
+        self.proxy_model.setSourceModel(model)
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+
+        self.list_view = IconListView()
+        self.list_view.setUniformItemSizes(True)
+        self.list_view.setViewMode(QListView.IconMode)
+        self.list_view.setModel(self.proxy_model)
+        self.list_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.list_view.doubleClicked.connect(self.select)
+        self.list_view.setMinimumWidth(500)
+        self.top_layout.addWidget(self.list_view)
+
+        self.show()
+
+    def select(self):
+        indexes = self.list_view.selectedIndexes()
+        self.close()
+        self.item = indexes[0].data()
+
+
+class IconListView(QListView):
+    """
+    A QListView that scales its grid size to ensure the same number of
+    columns are always drawn.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+
+    def resizeEvent(self, event):
+        """
+        Re-implemented to re-calculate the grid size to provide scaling icons
+
+        Parameters
+        ----------
+        event : QtCore.QEvent
+        """
+        width = self.viewport().width() - 30
+        # Minus 30 above ensures we don't end up with an item width that
+        # can't be drawn the expected number of times across the view without
+        # being wrapped.
+        # Without this, the view can flicker during resize
+        tile_width = width / 6
+        icon_width = int(tile_width * 0.8)
+        # tileWidth needs to be an integer for setGridSize
+        tile_width = int(tile_width)
+
+        self.setGridSize(QSize(tile_width, tile_width))
+        self.setIconSize(QSize(icon_width, icon_width))
+
+        return super().resizeEvent(event)
+
+
+class IconModel(QStringListModel):
+
+    def __init__(self):
+        super().__init__()
+
+    def flags(self, index):
+        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+    def data(self, index, role):
+        """
+        Re-implemented to return the icon for the current index.
+
+        Parameters
+        ----------
+        index : QtCore.QModelIndex
+        role : int
+
+        Returns
+        -------
+        Any
+        """
+        if role == Qt.DecorationRole:
+            icon_string = self.data(index, role=Qt.DisplayRole)
+            return QPixmap(os.path.join(os.path.curdir, "examples",
+                                        list(examples["name_pairs"].keys())
+                                        [list(examples["name_pairs"].values()).index(icon_string)]))
+        return super().data(index, role)
 
 
 if __name__ == "__main__":
