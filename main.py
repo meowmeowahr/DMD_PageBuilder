@@ -54,7 +54,7 @@ class MainWindow(WinDarkWindow):
         self.setWindowTitle("DMD Page Builder")
         self.setWindowIcon(QIcon("icon.svg"))
 
-        self.file = None
+        self.file = ""
         self.im = Image.open("error.png")
         self.threshold = 50
         self.invert = False
@@ -196,20 +196,24 @@ class MainWindow(WinDarkWindow):
 
     def load_source(self):
         dialog = QFileDialog(self)
-        dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib *.jpg *.jpeg *.jpe *.jfif *.tiff *.tif *.webp)")
+        dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib *.jpg "
+                             "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp *.dmd)")
         out = dialog.exec()
         if out:
             self.file = dialog.selectedFiles()[0]
 
-            self.im = Image.open(self.file)
-            if self.im.size != (32, 32):
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Warning)
-                msg.setText("Image Size must be 32x32")
-                msg.setWindowTitle("Image Size")
-                msg.setStandardButtons(QMessageBox.Ok)
-                msg.exec_()
-            else:
+            if self.file.endswith(".dmd"):
+                with open(self.file, 'rb') as file:
+                    data = file.read()
+
+                pixels = []
+                for byte in data[1:]:
+                    pixel = 0 if byte == 0x00 else 255
+                    pixels.append(pixel)
+
+                self.im = Image.new('L', (32, 32))
+                self.im.putdata(pixels)
+
                 self.file_text.setText(str_trunc(self.file, MAX_FILE_PREVIEW_LEN))
                 preview_im = self.im
                 preview_im = remove_transparency(preview_im, (0, 0, 0))
@@ -222,13 +226,47 @@ class MainWindow(WinDarkWindow):
                 self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
                 self.create_image()
+            else:
+                self.im = Image.open(self.file)
+                if self.im.size != (32, 32):
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("Image Size must be 32x32")
+                    msg.setWindowTitle("Image Size")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
+                else:
+                    self.file_text.setText(str_trunc(self.file, MAX_FILE_PREVIEW_LEN))
+                    preview_im = self.im
+                    preview_im = remove_transparency(preview_im, (0, 0, 0))
+                    preview_im = preview_im.convert("RGB")
+                    data = preview_im.tobytes("raw", "RGB")
+                    qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
+                                QImage.Format.Format_RGB888)
+                    preview_pixmap = QPixmap.fromImage(qi)
+                    self.source_preview.setPixmap(preview_pixmap.scaled(64, 64))
+                    self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
+
+                    self.create_image()
 
     def create_image(self):
         self.invert = self.invert_check.isChecked()
         self.threshold = self.threshold_slider.value()
 
         if self.file:
-            self.im = Image.open(self.file)
+            if self.file.endswith(".dmd"):
+                with open(self.file, 'rb') as file:
+                    data = file.read()
+
+                pixels = []
+                for byte in data[1:]:
+                    pixel = 0 if byte == 0x00 else 255
+                    pixels.append(pixel)
+
+                self.im = Image.new('L', (32, 32))
+                self.im.putdata(pixels)
+            else:
+                self.im = Image.open(self.file)
         else:
             self.im = Image.open("error.png")
 
