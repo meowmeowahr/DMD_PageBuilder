@@ -197,7 +197,9 @@ class MainWindow(WinDarkWindow):
     def load_source(self):
         dialog = QFileDialog(self)
         dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib *.jpg "
-                             "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp *.dmd)")
+                             "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp *.dmd)\n"
+                             "Raster Images (*.png *.jpg *.bmp *.dib *.jpg "
+                             "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp)\nDMD Images (*.dmd)")
         out = dialog.exec()
         if out:
             self.file = dialog.selectedFiles()[0]
@@ -206,8 +208,23 @@ class MainWindow(WinDarkWindow):
                 with open(self.file, 'rb') as file:
                     data = file.read()
 
+                if len(data) == 1025:
+                    start_byte = 1
+                    self.timemult = data[0]
+                    self.multiplier_spin.setValue(self.timemult)
+                elif len(data) == 1024:
+                    start_byte = 0
+                else:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText(f"Image is corrupt\nExpected 1025/1024 bytes, Got {len(data)} bytes")
+                    msg.setWindowTitle("Image Error")
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
+                    return
+
                 pixels = []
-                for byte in data[1:]:
+                for byte in data[start_byte:]:
                     pixel = 0 if byte == 0x00 else 255
                     pixels.append(pixel)
 
