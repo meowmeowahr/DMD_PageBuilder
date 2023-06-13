@@ -1,9 +1,19 @@
 {
   "name_pairs": {
     "alert.bmp": "Alert (MDI)",
+    "alien.bmp": "Alein (MDI)",
+    "baguette.bmp": "Baguette (MDI)",
+    "cloud.bmp": "Cloud (MDI)",
     "robot.bmp": "Robot (MDI)",
+    "snowflake.bmp": "Snowflake (MDI)",
     "wifi.bmp": "Wi-Fi (MDI)",
     "test.bmp": "X",
-    "logo.bmp": "Logo"
+    "logo.bmp": "Logo",
+    "pattern1.bmp": "Pattern 1",
+    "pattern2.bmp": "Pattern 2",
+    "pattern3.bmp": "Pattern 3",
+    "pattern4.bmp": "Pattern 4",
+    "pattern5.bmp": "Pattern 5",
+    "python.bmp": "Python Logo"
   }
 }

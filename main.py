@@ -424,7 +424,7 @@ class ExamplePicker(QDialog):
         self.list_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.list_view.doubleClicked.connect(self.select)
         self.list_view.clicked.connect(lambda: self.select_btn.setEnabled(True))
-        self.list_view.setMinimumWidth(500)
+        self.list_view.setMinimumWidth(520)
         self.top_layout.addWidget(self.list_view)
 
         self.bottom_layout = QHBoxLayout()
