@@ -117,8 +117,8 @@ class MainWindow(Window):
         self.load_layout.addStretch()
 
         self.source_preview = QLabel()
-        self.source_preview.setPixmap(QPixmap("error.png").scaled(64, 64))
-        self.source_preview.setFixedSize(QSize(64, 64))
+        self.source_preview.setPixmap(QPixmap("error.png").scaled(256, 256))
+        self.source_preview.setFixedSize(QSize(256, 256))
         self.source_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.load_layout.addWidget(self.source_preview, alignment=Qt.AlignmentFlag.AlignCenter)
 
@@ -259,7 +259,7 @@ class MainWindow(Window):
                 qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
                             QImage.Format.Format_RGB888)
                 preview_pixmap = QPixmap.fromImage(qi)
-                self.source_preview.setPixmap(preview_pixmap.scaled(64, 64))
+                self.source_preview.setPixmap(preview_pixmap.scaled(256, 256))
                 self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
                 self.create_image()
@@ -281,7 +281,7 @@ class MainWindow(Window):
                     qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
                                 QImage.Format.Format_RGB888)
                     preview_pixmap = QPixmap.fromImage(qi)
-                    self.source_preview.setPixmap(preview_pixmap.scaled(64, 64))
+                    self.source_preview.setPixmap(preview_pixmap.scaled(256, 256))
                     self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
                     self.create_image()
@@ -297,7 +297,7 @@ class MainWindow(Window):
         qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
                     QImage.Format.Format_RGB888)
         preview_pixmap = QPixmap.fromImage(qi)
-        self.source_preview.setPixmap(preview_pixmap.scaled(64, 64))
+        self.source_preview.setPixmap(preview_pixmap.scaled(256, 256))
         self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
     def load_example(self):
