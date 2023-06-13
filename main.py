@@ -18,6 +18,7 @@ else:
     Window = QWidget
 
 __version__ = "v0.1.0"
+__author__ = "Kevin Ahr"
 
 MAX_FILE_PREVIEW_LEN = 40
 
@@ -205,7 +206,7 @@ class MainWindow(Window):
         self.about_version.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.about_layout.addWidget(self.about_version)
 
-        self.about_author = QLabel("By: Kevin Ahr")
+        self.about_author = QLabel(f"By: {__author__}")
         self.about_author.setObjectName("H2")
         self.about_author.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.about_layout.addWidget(self.about_author)
@@ -431,12 +432,12 @@ class ExamplePicker(QDialog):
 
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setSourceModel(model)
-        self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
 
         self.list_view = IconListView()
         self.list_view.setViewMode(QListView.IconMode)
         self.list_view.setModel(self.proxy_model)
-        self.list_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.list_view.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.list_view.doubleClicked.connect(self.select)
         self.list_view.clicked.connect(lambda: self.select_btn.setEnabled(True))
         self.list_view.setMinimumWidth(520)
@@ -528,7 +529,7 @@ class IconModel(QStringListModel):
         super().__init__()
 
     def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
 
     def data(self, index, role):
         """
@@ -543,8 +544,8 @@ class IconModel(QStringListModel):
         -------
         Any
         """
-        if role == Qt.DecorationRole:
-            icon_string = self.data(index, role=Qt.DisplayRole)
+        if role == Qt.ItemDataRole.DecorationRole:
+            icon_string = self.data(index, role=Qt.ItemDataRole.DisplayRole)
             return QPixmap(os.path.join(os.path.curdir, "examples",
                                         list(examples["name_pairs"].keys())
                                         [list(examples["name_pairs"].values()).index(icon_string)]))
