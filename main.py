@@ -397,6 +397,7 @@ class MainWindow(Window):
 
 
 class ExamplePicker(QDialog):
+    # noinspection PyArgumentList
     def __init__(self, parent):
         super(ExamplePicker, self).__init__(parent)
         self.setModal(True)
