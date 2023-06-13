@@ -407,8 +407,22 @@ class ExamplePicker(QDialog):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
+        self.filter_layout = QHBoxLayout()
+        self.layout.addLayout(self.filter_layout)
+
         self.top_layout = QHBoxLayout()
         self.layout.addLayout(self.top_layout)
+
+        self.filter_timer = QTimer(self)
+        self.filter_timer.setSingleShot(True)
+        self.filter_timer.setInterval(500)
+        self.filter_timer.timeout.connect(self.update_filter)
+
+        self.search = QLineEdit()
+        self.search.setPlaceholderText("Search...")
+        self.search.textChanged.connect(self.trigger_delayed_update)
+        self.search.returnPressed.connect(self.trigger_immediate_update)
+        self.filter_layout.addWidget(self.search)
 
         icon_files = examples["name_pairs"].values()
 
@@ -453,6 +467,26 @@ class ExamplePicker(QDialog):
         indexes = self.list_view.selectedIndexes()
         self.close()
         self.item = indexes[0].data()
+
+    def update_filter(self):
+        re_string = ""
+
+        search_term = self.search.text()
+        if search_term:
+            re_string += ".*%s.*$" % search_term
+
+        try:
+            self.proxy_model.setFilterRegularExpression(re_string)
+        except AttributeError:
+            self.proxy_model.setFilterRegExp(re_string)
+
+    def trigger_delayed_update(self):
+        self.filter_timer.stop()
+        self.filter_timer.start()
+
+    def trigger_immediate_update(self):
+        self.filter_timer.stop()
+        self.update_filter()
 
 
 class IconListView(QListView):

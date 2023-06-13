@@ -40,6 +40,17 @@ QScrollBar::handle {{
     background-color: {QTMATERIAL_PRIMARYCOLOR};
 }}
 
+QLineEdit {{
+    background-color: {QTMATERIAL_SECONDARYDARKCOLOR};
+    border: 2px solid {QTMATERIAL_SECONDARYCOLOR};
+    border-radius: 4px;
+}}
+
+QLineEdit::focus {{
+    border: 2px solid {QTMATERIAL_PRIMARYCOLOR};
+    border-radius: 4px;
+}}
+
 #H1 {{
   font-size: 22px;
   font-weight: bold;
