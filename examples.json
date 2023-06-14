@@ -1,7 +1,9 @@
 {
   "name_pairs": {
-    "alert.bmp": "Alert (MDI)",
     "alien.bmp": "Alein (MDI)",
+    "alert.bmp": "Alert (MDI)",
+    "anvil.bmp": "Anvil (MDI)",
+    "arrow-all.bmp": "Arrow All (MDI)",
     "baguette.bmp": "Baguette (MDI)",
     "cat.bmp": "Cat (MDI)",
     "cellphone.bmp": "Cellphone (MDI)",
@@ -17,6 +19,7 @@
     "wifi.bmp": "Wi-Fi (MDI)",
     "logo.bmp": "Logo",
     "circle.bmp": "Circle",
+    "filled.bmp": "Filled",
     "pattern1.bmp": "Pattern 1",
     "pattern2.bmp": "Pattern 2",
     "pattern3.bmp": "Pattern 3",
