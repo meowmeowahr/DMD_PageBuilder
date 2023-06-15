@@ -3,8 +3,9 @@ import os
 import statistics
 import sys
 import platform
+import time
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageColor
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -89,6 +90,12 @@ class MainWindow(Window):
         self.edit_layout = QVBoxLayout()
         self.edit_widget.setLayout(self.edit_layout)
         self.widget.addTab(self.edit_widget, "Edit")
+
+        self.preview_widget = QWidget()
+        self.preview_layout = QVBoxLayout()
+        self.preview_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.preview_widget.setLayout(self.preview_layout)
+        self.widget.addTab(self.preview_widget, "Preview")
 
         self.about_widget = QWidget()
         self.about_layout = QVBoxLayout()
@@ -190,6 +197,9 @@ class MainWindow(Window):
         self.save_dmd_button.setIconSize(QSize(32, 32))
         self.save_dmd_button.clicked.connect(self.save_dmd)
         self.bottom_layout.addWidget(self.save_dmd_button)
+
+        self.preview = QLabel()
+        self.preview_layout.addWidget(self.preview)
 
         self.about_icon = QLabel()
         self.about_icon.setPixmap(QPixmap("icon-large.svg").scaled(192, 192,
@@ -367,8 +377,39 @@ class MainWindow(Window):
         qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
                     QImage.Format.Format_RGB888)
 
-        preview_pixmap = QPixmap.fromImage(qi)
+        preview_pixmap = QPixmap(qi)
         self.output_preview.setPixmap(preview_pixmap.scaled(128, 128))
+
+        upscaled_image = Image.new("RGB", (256, 256))  # White border color
+
+        upscaled_size = (256, 256)
+        border = 4
+        bcolor = ImageColor.getcolor(os.environ["QTMATERIAL_SECONDARYDARKCOLOR"], "RGB")
+
+        pixels = []
+        for y in range(upscaled_size[1]):
+            for x in range(upscaled_size[0]):
+                if x % (upscaled_size[0] / 32) < border or y % (upscaled_size[1] / 32) < border:
+                    color = bcolor
+                else:
+                    px = int(x / (upscaled_size[0] / 32))
+                    py = int(y / (upscaled_size[1] / 32))
+
+                    color = preview_im.getpixel((px, py))
+
+                pixels.append(color)
+
+        upscaled_image.putdata(pixels)
+
+        upscaled_image = upscaled_image.transform(upscaled_image.size, Image.AFFINE,
+                                                  (1, 0, border // 2, 0, 1, border // 2),
+                                                  fillcolor=bcolor)
+        data = upscaled_image.tobytes("raw", "RGB")
+
+        qi = QImage(data, upscaled_image.size[0], upscaled_image.size[1], upscaled_image.size[0] * 3,
+                    QImage.Format.Format_RGB888)
+
+        self.preview.setPixmap(QPixmap(qi))
 
     def save_pc(self):
         dialog = QFileDialog(self)
