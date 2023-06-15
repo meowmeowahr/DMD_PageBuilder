@@ -10,6 +10,7 @@ Create Images for [DMD Page Loader](https://github.com/meowmeowahr/DMD_PageLoade
 
 * Load 32x32 image in 12 different formats
 * Built-in example images
+* Screen preview
 * Export DMD v2
 
 ## DMD File Format
