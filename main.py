@@ -3,7 +3,6 @@ import os
 import statistics
 import sys
 import platform
-import time
 
 from PIL import Image, ImageOps, ImageColor
 
@@ -268,7 +267,7 @@ class MainWindow(Window):
                 data = preview_im.tobytes("raw", "RGB")
                 qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
                             QImage.Format.Format_RGB888)
-                preview_pixmap = QPixmap.fromImage(qi)
+                preview_pixmap = QPixmap(qi)
                 self.source_preview.setPixmap(preview_pixmap.scaled(256, 256))
                 self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
@@ -290,7 +289,7 @@ class MainWindow(Window):
                     data = preview_im.tobytes("raw", "RGB")
                     qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
                                 QImage.Format.Format_RGB888)
-                    preview_pixmap = QPixmap.fromImage(qi)
+                    preview_pixmap = QPixmap(qi)
                     self.source_preview.setPixmap(preview_pixmap.scaled(256, 256))
                     self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
@@ -306,7 +305,7 @@ class MainWindow(Window):
         data = preview_im.tobytes("raw", "RGB")
         qi = QImage(data, preview_im.size[0], preview_im.size[1], preview_im.size[0] * 3,
                     QImage.Format.Format_RGB888)
-        preview_pixmap = QPixmap.fromImage(qi)
+        preview_pixmap = QPixmap(qi)
         self.source_preview.setPixmap(preview_pixmap.scaled(256, 256))
         self.source_preview_2.setPixmap(preview_pixmap.scaled(128, 128))
 
@@ -599,7 +598,7 @@ if __name__ == "__main__":
     app.setApplicationVersion(__version__)
 
     qt_material.apply_stylesheet(app, "theme.xml", css_file="m3-style.qss")
-    secondary_color = os.environ.get("QTMATERIAL_SECONDARYCOLOR")
+    secondary_color = os.environ["QTMATERIAL_SECONDARYCOLOR"]
 
     window = MainWindow()
     sys.exit(app.exec())
