@@ -22,6 +22,12 @@ __author__ = "Kevin Ahr"
 
 MAX_FILE_PREVIEW_LEN = 40
 
+preview_colors = {"Red": (255, 20, 20),
+                  "Green": (20, 255, 20),
+                  "Yellow": (255, 255, 30),
+                  "Blue": (20, 20, 255),
+                  "White": (250, 250, 250)}
+
 with open(os.path.join(os.path.curdir, "examples.json")) as ex_file:
     examples = json.loads(ex_file.read())
 
@@ -196,6 +202,14 @@ class MainWindow(Window):
         self.save_dmd_button.setIconSize(QSize(32, 32))
         self.save_dmd_button.clicked.connect(self.save_dmd)
         self.bottom_layout.addWidget(self.save_dmd_button)
+
+        self.preview_top_layout = QHBoxLayout()
+        self.preview_layout.addLayout(self.preview_top_layout)
+
+        self.preview_color = QComboBox()
+        self.preview_color.addItems(["Red", "Green", "Yellow", "Blue", "White"])
+        self.preview_color.currentIndexChanged.connect(self.create_image)
+        self.preview_top_layout.addWidget(self.preview_color)
 
         self.preview = QLabel()
         self.preview_layout.addWidget(self.preview)
@@ -394,7 +408,10 @@ class MainWindow(Window):
                     px = int(x / (upscaled_size[0] / 32))
                     py = int(y / (upscaled_size[1] / 32))
 
-                    color = preview_im.getpixel((px, py))
+                    if preview_im.getpixel((px, py)) == (255, 255, 255):
+                        color = preview_colors[self.preview_color.currentText()]
+                    else:
+                        color = preview_im.getpixel((px, py))
 
                 pixels.append(color)
 
