@@ -123,6 +123,12 @@ class MainWindow(Window):
         self.file_button.clicked.connect(self.load_example)
         self.file_layout.addWidget(self.file_button)
 
+        self.save_quick_button = QPushButton("Quick Export")
+        self.save_quick_button.setIcon(qta.icon("mdi.micro-sd", color=secondary_color))
+        self.save_quick_button.setIconSize(QSize(32, 32))
+        self.save_quick_button.clicked.connect(self.save_dmd)
+        self.load_layout.addWidget(self.save_quick_button)
+
         self.file_text = QLabel(str_trunc("No file selected", MAX_FILE_PREVIEW_LEN))
         self.load_layout.addWidget(self.file_text)
 
