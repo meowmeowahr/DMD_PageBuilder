@@ -18,7 +18,7 @@ if platform.system() == "Windows" and platform.release() == "10":
 else:
     Window = QWidget
 
-__version__ = "v0.2.0"
+__version__ = "v0.3.0"
 __author__ = "Kevin Ahr"
 
 MAX_FILE_PREVIEW_LEN = 40
