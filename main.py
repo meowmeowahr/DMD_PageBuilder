@@ -3,6 +3,7 @@ import os
 import statistics
 import sys
 import platform
+import argparse
 
 from PIL import Image, ImageOps, ImageColor
 
@@ -54,6 +55,40 @@ def remove_transparency(im, bg_colour=(255, 255, 255)):
         return im
 
 
+def convert(in_file, output, threshold=50, invert=False):
+    image = Image.open(in_file)
+
+    image = remove_transparency(image, (0, 0, 0))
+    image = image.convert("RGB")
+
+    raw_data = slice_per(list(image.getdata()), 32)
+
+    for yi, y in enumerate(raw_data):
+        for xi, x in enumerate(y):
+            if statistics.mean(x) > threshold:
+                raw_data[yi][xi] = (255, 255, 255)
+            else:
+                raw_data[yi][xi] = (0, 0, 0)
+
+    image = Image.new(image.mode, image.size)
+    image.putdata(flatten(raw_data))
+    image = image.rotate(-90)
+    image = ImageOps.mirror(image)
+
+    data = list(image.getdata())
+
+    for index, pixel in enumerate(data):
+        if pixel == (255, 255, 255):
+            data[index] = 0x01
+        else:
+            data[index] = 0x00
+
+    data.insert(0, 1)
+
+    with open(output, "wb") as file:
+        file.write(bytes(data))
+
+
 def slice_per(source, step):
     return [source[i::step] for i in range(step)]
 
@@ -71,7 +106,7 @@ class MainWindow(Window):
 
         self.file = ""
         self.im = Image.open("error.png")
-        self.threshold = 50
+        self.threshold = args.threshold
         self.invert = False
         self.timemult = 1
 
@@ -615,13 +650,36 @@ class IconModel(QStringListModel):
         return super().data(index, role)
 
 
+def run_single():
+    # checks
+    if not os.path.isfile(args.input):
+        print(f"input, {args.input} is not a file")
+        sys.exit()
+    if os.path.isdir(args.output):
+        print(f"output, {args.output} is not a valid file")
+        sys.exit()
+    convert(args.input, args.output, args.threshold)
+    print(f"Converted {args.input} successfully")
+
+
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    app.setApplicationName("DMD Page Builder")
-    app.setApplicationVersion(__version__)
+    parser = argparse.ArgumentParser(description='Convert raster images to DMD')
+    parser.add_argument("--mode", default="gui", type=str, choices=["gui", "single", "batch"],
+                        help="mode to run program")
+    parser.add_argument("--input", default=os.path.abspath(os.curdir), type=str, help="input path or file")
+    parser.add_argument("--output", default=os.path.abspath(os.curdir), type=str, help="output path or file")
+    parser.add_argument("--threshold", default=50, type=int, help="on/off threshold (0~255)")
+    args = parser.parse_args()
 
-    qt_material.apply_stylesheet(app, "theme.xml", css_file="m3-style.qss")
-    secondary_color = os.environ["QTMATERIAL_SECONDARYCOLOR"]
+    if args.mode == "gui":
+        app = QApplication(sys.argv)
+        app.setApplicationName("DMD Page Builder")
+        app.setApplicationVersion(__version__)
 
-    window = MainWindow()
-    sys.exit(app.exec())
+        qt_material.apply_stylesheet(app, "theme.xml", css_file="m3-style.qss")
+        secondary_color = os.environ["QTMATERIAL_SECONDARYCOLOR"]
+
+        window = MainWindow()
+        sys.exit(app.exec())
+    elif args.mode == "single":
+        run_single()
