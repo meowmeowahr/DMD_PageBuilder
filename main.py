@@ -61,6 +61,9 @@ def convert(in_file, output, threshold=50, invert=False):
     image = remove_transparency(image, (0, 0, 0))
     image = image.convert("RGB")
 
+    if invert:
+        image = ImageOps.invert(image)
+
     raw_data = slice_per(list(image.getdata()), 32)
 
     for yi, y in enumerate(raw_data):
@@ -658,7 +661,7 @@ def run_single():
     if os.path.isdir(args.output):
         print(f"output, {args.output} is not a valid file")
         sys.exit()
-    convert(args.input, args.output, args.threshold)
+    convert(args.input, args.output, args.threshold, args.invert)
     print(f"Converted {args.input} successfully")
 
 
@@ -669,6 +672,7 @@ if __name__ == "__main__":
     parser.add_argument("--input", default=os.path.abspath(os.curdir), type=str, help="input path or file")
     parser.add_argument("--output", default=os.path.abspath(os.curdir), type=str, help="output path or file")
     parser.add_argument("--threshold", default=50, type=int, help="on/off threshold (0~255)")
+    parser.add_argument("--invert", default=False, type=bool, help="invert on/off pixels")
     args = parser.parse_args()
 
     if args.mode == "gui":
