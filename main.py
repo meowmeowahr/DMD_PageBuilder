@@ -108,7 +108,7 @@ class MainWindow(Window):
         self.setWindowIcon(QIcon("icon.svg"))
 
         self.file = ""
-        self.im = Image.open("error.png")
+
         self.threshold = args.threshold
         self.invert = False
         self.timemult = 1
@@ -152,7 +152,7 @@ class MainWindow(Window):
         self.file_button = QPushButton("Pick File")
         self.file_button.setIcon(qta.icon("mdi.upload", color=secondary_color))
         self.file_button.setIconSize(QSize(32, 32))
-        self.file_button.clicked.connect(self.load_source)
+        self.file_button.clicked.connect(lambda: self.load_source())  # lambda required to run dialog
         self.file_layout.addWidget(self.file_button)
 
         self.file_button = QPushButton("Pick an Example")
@@ -278,18 +278,31 @@ class MainWindow(Window):
         self.about_author.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.about_layout.addWidget(self.about_author)
 
+        if os.path.isfile(args.input):
+            self.im = Image.open(args.input)
+            self.file = args.input
+            self.load_source(False)
+        else:
+            self.im = Image.open("error.png")
+            self.file = ""
+
         self.create_image()
         self.show()
 
-    def load_source(self):
-        dialog = QFileDialog(self)
-        dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib *.jpg "
-                             "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp *.dmd)\n"
-                             "Raster Images (*.png *.jpg *.bmp *.dib *.jpg "
-                             "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp)\nDMD Images (*.dmd)")
-        out = dialog.exec()
+    def load_source(self, dialog=True):
+        print(dialog)
+        if dialog:
+            dialog = QFileDialog(self)
+            dialog.setNameFilter("Supported Images (*.png *.jpg *.bmp *.dib *.jpg "
+                                 "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp *.dmd)\n"
+                                 "Raster Images (*.png *.jpg *.bmp *.dib *.jpg "
+                                 "*.jpeg *.jpe *.jfif *.tiff *.tif *.webp)\nDMD Images (*.dmd)")
+            out = dialog.exec()
+        else:
+            out = True
         if out:
-            self.file = dialog.selectedFiles()[0]
+            if dialog:
+                self.file = dialog.selectedFiles()[0]
 
             if self.file.endswith(".dmd"):
                 with open(self.file, 'rb') as file:
